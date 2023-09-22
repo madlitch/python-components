@@ -10,9 +10,9 @@
 import logging
 import unittest
 
-import  src.main.python.programmingtheiot.common.ConfigConst as ConfigConst
+import src.main.python.programmingtheiot.common.ConfigConst as ConfigConst
 
-from  src.main.python.programmingtheiot.common.ConfigUtil import ConfigUtil
+from src.main.python.programmingtheiot.common.ConfigUtil import ConfigUtil
 
 class ConfigUtilTest(unittest.TestCase):
 	"""
