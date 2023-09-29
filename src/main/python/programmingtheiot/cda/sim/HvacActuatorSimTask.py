@@ -9,16 +9,14 @@
 
 import logging
 import random
+import src.main.python.programmingtheiot.common.ConfigConst as ConfigConst
+import src.main.python.programmingtheiot.common.ConfigConst as ConfigConst
 
-from programmingtheiot.data.ActuatorData import ActuatorData
-from programmingtheiot.cda.sim.BaseActuatorSimTask import BaseActuatorSimTask
+from src.main.python.programmingtheiot.data.ActuatorData import ActuatorData
+from src.main.python.programmingtheiot.cda.sim.BaseActuatorSimTask import BaseActuatorSimTask
+
 
 class HvacActuatorSimTask(BaseActuatorSimTask):
-	"""
-	Shell representation of class for student implementation.
-	
-	"""
-
-	def __init__(self):
-		pass
-		
+    def __init__(self):
+        super(HvacActuatorSimTask, self).__init__(name=ConfigConst.HVAC_ACTUATOR_NAME,
+                                                  typeID=ConfigConst.HVAC_ACTUATOR_TYPE, simpleName="HVAC")

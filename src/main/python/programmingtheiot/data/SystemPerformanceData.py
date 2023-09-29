@@ -12,33 +12,62 @@ import src.main.python.programmingtheiot.common.ConfigConst as ConfigConst
 from src.main.python.programmingtheiot.data.BaseIotData import BaseIotData
 
 class SystemPerformanceData(BaseIotData):
-	"""
-	Shell representation of class for student implementation.
-	
-	"""
-	DEFAULT_VAL = 0.0
-	
-	def __init__(self, d = None):
-		super(SystemPerformanceData, self).__init__(name = ConfigConst.SYSTEM_PERF_MSG, typeID = ConfigConst.SYSTEM_PERF_TYPE, d = d)
-		pass
-	
+	def __init__(self, typeID: int = ConfigConst.SYSTEM_PERF_TYPE, name=ConfigConst.SYSTEM_PERF_NAME, d=None):
+		super(SystemPerformanceData, self).__init__(name=name, typeID=typeID, d=d)
+		self.cpuUtil = ConfigConst.DEFAULT_VAL
+		self.memUtil = ConfigConst.DEFAULT_VAL
+		self.diskUtil = ConfigConst.DEFAULT_VAL
+		self.stateData = ""
+		self.isResponse = False
+
 	def getCpuUtilization(self):
-		pass
-	
-	def getDiskUtilization(self):
-		pass
-	
+		self.updateTimeStamp()
+		return self.cpuUtil
+
+	def setCpuUtilization(self, val: float):
+		self.updateTimeStamp()
+		self.cpuUtil = val
+
 	def getMemoryUtilization(self):
-		pass
-	
-	def setCpuUtilization(self, cpuUtil):
-		pass
-	
-	def setDiskUtilization(self, diskUtil):
-		pass
-	
-	def setMemoryUtilization(self, memUtil):
-		pass
-	
+		self.updateTimeStamp()
+		return self.memUtil
+
+	def setMemoryUtilization(self, val: float):
+		self.updateTimeStamp()
+		self.memUtil = val
+
+	def getCommand(self) -> int:
+		return self.command
+
+	def getStateData(self) -> str:
+		return self.stateData
+
+	def getValue(self) -> float:
+		return self.value
+
+	def isResponseFlagEnabled(self) -> bool:
+		return self.isResponse
+
+	def setCommand(self, command: int):
+		self.command = command
+		self.updateTimeStamp()
+
+	def setAsResponse(self):
+		self.isResponse = True
+		self.updateTimeStamp()
+
+	def setStateData(self, stateData: str):
+		if stateData:
+			self.stateData = stateData
+			self.updateTimeStamp()
+
+	def setValue(self, val: float):
+		self.value = val
+		self.updateTimeStamp()
+
 	def _handleUpdateData(self, data):
-		pass
+		if data and isinstance(data, SystemPerformanceData):
+			self.cpuUtil = data.cpuUtil
+			self.memUtil = data.memUtil
+			self.diskUtil = data.diskUtil
+			self.isResponse = data.isResponseFlagEnabled()

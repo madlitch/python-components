@@ -9,7 +9,7 @@
 
 import logging
 
-from programmingtheiot.data.SensorData import SensorData
+from src.main.python.programmingtheiot.data.SensorData import SensorData
 
 class PressureI2cSensorAdapterTask():
 	"""

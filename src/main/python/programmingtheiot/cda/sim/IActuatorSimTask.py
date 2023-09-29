@@ -7,7 +7,7 @@
 # Copyright (c) 2020 by Andrew D. King
 # 
 
-from programmingtheiot.data.ActuatorData import ActuatorData
+from src.main.python.programmingtheiot.data.ActuatorData import ActuatorData
 
 class IActuatorSimTask():
 	"""
