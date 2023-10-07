@@ -24,10 +24,17 @@ class DataUtil():
         return jsonData
 
     def sensorDataToJson(self, data: SensorData = None, useDecForFloat: bool = False):
+        if not data:
+            logging.debug("SensorData is null. Returning empty string.")
+            return ""
+
         jsonData = self._generateJsonData(obj=data, useDecForFloat=False)
         return jsonData
 
     def systemPerformanceDataToJson(self, data: SystemPerformanceData = None, useDecForFloat: bool = False):
+        if not data:
+            logging.debug("SystemPerformanceData is null. Returning empty string.")
+            return ""
         jsonData = self._generateJsonData(obj=data, useDecForFloat=False)
         return jsonData
 
