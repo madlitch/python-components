@@ -124,7 +124,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		self.coapClient.sendGetRequest( \
 			resource = ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, name = ConfigConst.TEMP_SENSOR_NAME, enableCON = True, timeout = 5)
 		
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testConnectAndGetNon(self):
 		"""
 		Comment the annotation to test NON GET
@@ -132,7 +132,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		self.coapClient.sendGetRequest( \
 			resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, enableCON = False, timeout = 5)
 
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testConnectAndDeleteCon(self):
 		"""
 		Comment the annotation to test CON DELETE
@@ -140,7 +140,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		self.coapClient.sendDeleteRequest( \
 			resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, enableCON = True, timeout = 5)
 	
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testConnectAndDeleteNon(self):
 		"""
 		Comment the annotation to test NON DELETE
@@ -148,7 +148,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		self.coapClient.sendDeleteRequest( \
 			resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, enableCON = False, timeout = 5)
 
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testObserveForTwoMinutes(self):
 		"""
 		Comment the annotation to test Observe
@@ -157,7 +157,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		sleep(120)
 		self._stopObserver()
 	
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testConnectAndPostCon(self):
 		"""
 		Comment the annotation to test CON POST
@@ -165,7 +165,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		msg = "This is a test."
 		self.coapClient.sendPostRequest(resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, payload = msg, enableCON = True, timeout = 5)
 
-	@unittest.skip("Ignore for now.")
+	# @unittest.skip("Ignore for now.")
 	def testConnectAndPostNon(self):
 		"""
 		Comment the annotation to test NON POST
@@ -173,7 +173,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		msg = "This is a test."
 		self.coapClient.sendPostRequest(resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, payload = msg, enableCON = False, timeout = 5)
 
-	@unittest.skip("Ignore for now.")
+# 	@unittest.skip("Ignore for now.")
 	def testConnectAndPutCon(self):
 		"""
 		Comment the annotation to test CON PUT
@@ -181,7 +181,7 @@ class CoapServerAdapterTest(unittest.TestCase):
 		msg = "This is a test."
 		self.coapClient.sendPutRequest(resource = ResourceNameEnum.CDA_MGMT_STATUS_MSG_RESOURCE, payload = msg, enableCON = True, timeout = 5)
 
-	@unittest.skip("Ignore for now.")
+# 	@unittest.skip("Ignore for now.")
 	def testConnectAndPutNon(self):
 		"""
 		Comment the annotation to test NON PUT

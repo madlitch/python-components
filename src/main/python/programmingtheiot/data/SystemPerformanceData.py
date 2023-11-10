@@ -36,6 +36,14 @@ class SystemPerformanceData(BaseIotData):
 		self.updateTimeStamp()
 		self.memUtil = val
 
+	def getDiskUtilization(self):
+		self.updateTimeStamp()
+		return self.diskUtil
+
+	def setDiskUtilization(self, val: float):
+		self.updateTimeStamp()
+		self.diskUtil = val
+
 	def getCommand(self) -> int:
 		return self.command
 
