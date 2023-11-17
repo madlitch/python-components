@@ -79,28 +79,35 @@ class DeviceDataManager(IDataMessageListener):
 
         self.triggerHvacTempFloor = \
             self.configUtil.getFloat( \
-                ConfigConst.CONSTRAINED_DEVICE, ConfigConst.TRIGGER_HVAC_TEMP_FLOOR_KEY)
+                ConfigConst.CONSTRAINED_DEVICE, ConfigConst.TRIGGER_HVAC_TEMP_FLOOR_KEY);
 
         self.triggerHvacTempCeiling = \
             self.configUtil.getFloat( \
-                ConfigConst.CONSTRAINED_DEVICE, ConfigConst.TRIGGER_HVAC_TEMP_CEILING_KEY)
+                ConfigConst.CONSTRAINED_DEVICE, ConfigConst.TRIGGER_HVAC_TEMP_CEILING_KEY);
 
         self.enableMqttClient = \
             self.configUtil.getBoolean( \
                 section=ConfigConst.CONSTRAINED_DEVICE, key=ConfigConst.ENABLE_MQTT_CLIENT_KEY)
 
+        self.enableCoapServer = \
+            self.configUtil.getBoolean( \
+                section=ConfigConst.CONSTRAINED_DEVICE, key=ConfigConst.ENABLE_COAP_SERVER_KEY)
+
+        self.enableCoapClient = \
+            self.configUtil.getBoolean( \
+                section=ConfigConst.CONSTRAINED_DEVICE, key=ConfigConst.ENABLE_COAP_CLIENT_KEY)
+
         self.mqttClient = None
 
         if self.enableMqttClient:
-            self.mqttClient = MqttClientConnector()
+            self.mqttClient = MqttClientConnector("DeviceDataMQTT")
             self.mqttClient.setDataMessageListener(self)
 
-        self.enableCoapServer = \
-            self.configUtil.getBoolean( \
-                section = ConfigConst.CONSTRAINED_DEVICE, key = ConfigConst.ENABLE_COAP_SERVER_KEY)
-
         if self.enableCoapServer:
-            self.coapServer = CoapServerAdapter(dataMsgListener = self)
+            self.coapServer = CoapServerAdapter(dataMsgListener=self)
+
+        if self.enableCoapClient:
+            self.coapClient = CoapClientConnector(dataMsgListener=self)
 
     def getLatestActuatorDataResponseFromCache(self, name: str = None) -> ActuatorData:
         """
@@ -130,6 +137,13 @@ class DeviceDataManager(IDataMessageListener):
         pass
 
     def handleActuatorCommandMessage(self, data: ActuatorData = None) -> ActuatorData:
+        """
+        This callback method will be invoked by the connection that's handling
+        an incoming ActuatorData command message.
+
+        @param data The incoming ActuatorData command message.
+        @return boolean
+        """
         logging.info("Actuator data: " + str(data))
 
         if data:
@@ -140,6 +154,14 @@ class DeviceDataManager(IDataMessageListener):
             return None
 
     def handleActuatorCommandResponse(self, data: ActuatorData = None) -> bool:
+        """
+        This callback method will be invoked by the actuator manager that just
+        processed an ActuatorData command, which creates a new ActuatorData
+        instance and sets it as a response before calling this method.
+
+        @param data The incoming ActuatorData response message.
+        @return boolean
+        """
         if data:
             logging.debug("Incoming actuator response received (from actuator manager): " + str(data))
 
@@ -164,13 +186,22 @@ class DeviceDataManager(IDataMessageListener):
         This callback method is generic and designed to handle any incoming string-based
         message, which will likely be JSON-formatted and need to be converted to the appropriate
         data type. You may not need to use this callback at all.
-
+        
         @param data The incoming JSON message.
         @return boolean
-        """
+        """  # TODO comeback to this
+
         pass
 
     def handleSensorMessage(self, data: SensorData = None) -> bool:
+        """
+        This callback method will be invoked by the sensor manager that just processed
+        a new sensor reading, which creates a new SensorData instance that will be
+        passed to this method.
+
+        @param data The incoming SensorData message.
+        @return boolean
+        """
         if data:
             logging.debug("Incoming sensor data received (from sensor manager): " + str(data))
             self._handleSensorDataAnalysis(data)
@@ -180,6 +211,14 @@ class DeviceDataManager(IDataMessageListener):
             return False
 
     def handleSystemPerformanceMessage(self, data: SystemPerformanceData = None) -> bool:
+        """
+        This callback method will be invoked by the system performance manager that just
+        processed a new sensor reading, which creates a new SystemPerformanceData instance
+        that will be passed to this method.
+
+        @param data The incoming SystemPerformanceData message.
+        @return boolean
+        """
         if data:
             logging.debug("Incoming system performance message received (from sys perf manager): " + str(data))
             return True
@@ -204,9 +243,9 @@ class DeviceDataManager(IDataMessageListener):
 
         if self.mqttClient:
             self.mqttClient.connectClient()
-            self.mqttClient.subscribeToTopic(ResourceNameEnum.CDA_ACTUATOR_CMD_RESOURCE,
-                                             callback=None,
+            self.mqttClient.subscribeToTopic(ResourceNameEnum.CDA_ACTUATOR_CMD_RESOURCE, callback=None,
                                              qos=ConfigConst.DEFAULT_QOS)
+
         if self.coapServer:
             self.coapServer.startServer()
 
@@ -240,7 +279,13 @@ class DeviceDataManager(IDataMessageListener):
         """
         pass
 
-    def _handleSensorDataAnalysis(self, resource=None, data: SensorData = None):
+    def _handleSensorDataAnalysis(self, data: SensorData):
+        """
+        Call this from handleSensorMessage() to determine if there's
+        any action to take on the message. Steps to take:
+        1) Check config: Is there a rule or flag that requires immediate processing of data?
+        2) Act on data: If # 1 is true, determine what - if any - action is required, and execute.
+        """
         if self.handleTempChangeOnDevice and data.getTypeID() == ConfigConst.TEMP_SENSOR_TYPE:
             logging.info("Handle temp change: %s - type ID: %s", str(self.handleTempChangeOnDevice),
                          str(data.getTypeID()))
@@ -256,12 +301,6 @@ class DeviceDataManager(IDataMessageListener):
             else:
                 ad.setCommand(ConfigConst.COMMAND_OFF)
 
-            # NOTE: ActuatorAdapterManager and its associated actuator
-            # task implementations contain logic to avoid processing
-            # duplicative actuator commands - for the purposes
-            # of this exercise, the logic for filtering commands is
-            # left to ActuatorAdapterManager and its associated actuator
-            # task implementations, and not this function
             self.handleActuatorCommandMessage(ad)
 
     def _handleUpstreamTransmission(self, resourceName: ResourceNameEnum, msg: str):
